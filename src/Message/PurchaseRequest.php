@@ -16,35 +16,6 @@ class PurchaseRequest extends AbstractRequest
 
     protected $endpoint = '';
 
-    protected $endpoints = [
-        'test' => 'https://testvpos.asseco-see.com.tr/fim/api',
-        'asseco' => 'https://entegrasyon.asseco-see.com.tr/fim/api',
-        'isbank' => 'spos.isbank.com.tr',
-        'akbank' => 'www.sanalakpos.com',
-        'finansbank' => 'www.fbwebpos.com',
-        'denizbank' => 'denizbank.est.com.tr',
-        'kuveytturk' => 'kuveytturk.est.com.tr',
-        'halkbank' => 'sanalpos.halkbank.com.tr',
-        'anadolubank' => 'anadolusanalpos.est.com.tr',
-        'hsbc' => 'vpos.advantage.com.tr',
-        'ziraatbank' => 'sanalpos2.ziraatbank.com.tr',
-        
-        // Todo
-        'ingbank' => 'ingbank.est.com.tr',
-        'citibank' => 'citibank.est.com.tr',
-        'cardplus' => 'cardplus.est.com.tr'
-    ];
-
-    protected $url = [
-        "3d" => "/servlet/est3Dgate",
-        "3dhsbc" => "/servlet/hsbc3Dgate",
-        "list" => "/servlet/listapproved",
-        "detail" => "/servlet/cc5ApiServer",
-        "cancel" => "/servlet/cc5ApiServer",
-        "return" => "/servlet/cc5ApiServer",
-        "purchase" => "/servlet/cc5ApiServer"
-    ];
-
     public function getData()
     {
         $this->validate('amount', 'card');
@@ -84,14 +55,9 @@ class PurchaseRequest extends AbstractRequest
         // Todo: http protocol
         $protocol = 'https://';
         
-        if (! array_key_exists($gateway, $this->endpoints)) {
-            throw new \Exception('Invalid Gateway');
-        } else {
-            $this->endpoint = $this->endpoints[$gateway];
+        if (!isset($this->endpoint)) {
+            throw new \Exception('Invalid endpoint url');
         }
-        
-        // Build api post url
-        $this->endpoint = $this->getTestMode() == TRUE ? $this->endpoints["test"] : $protocol . $this->endpoints[$gateway] . $this->url["purchase"];
         
         $document = new DOMDocument('1.0', 'UTF-8');
         $root = $document->createElement('CC5Request');
@@ -178,14 +144,20 @@ class PurchaseRequest extends AbstractRequest
         return $this->response = new Response($this, $httpResponse->getBody()->getContents());
     }
 
-    public function getBank()
+    /**
+     * @return string
+     */
+    public function getEndpoint(): string
     {
-        return $this->getParameter('bank');
+        return $this->endpoint;
     }
 
-    public function setBank($value)
+    /**
+     * @param string $endpoint
+     */
+    public function setEndpoint(string $endpoint)
     {
-        return $this->setParameter('bank', $value);
+        $this->endpoint = $endpoint;
     }
 
     public function getUserName()

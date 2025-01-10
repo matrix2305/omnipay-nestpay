@@ -17,11 +17,6 @@ class PostRequest extends AbstractRequest
 
     protected $endpoint = '';
 
-    protected $endpoints = [
-        'test' => 'https://entegrasyon.asseco-see.com.tr/fim/est3Dgate',
-        'isbank' => 'https://sanalpos.isbank.com.tr/fim/est3Dgate',
-    ];
-
     public function getData()
     {
         $this->validate('card', 'transactionId');
@@ -66,14 +61,14 @@ class PostRequest extends AbstractRequest
         return $this->response = new PostResponse($this);
     }
 
-    public function getBank()
+    public function getEndpoint(): string
     {
-        return $this->getParameter('bank');
+        return $this->endpoint;
     }
 
-    public function setBank($value)
+    public function setEndpoint(string $endpoint)
     {
-        return $this->setParameter('bank', $value);
+        $this->endpoint = $endpoint;
     }
 
     public function getUserName()
@@ -180,10 +175,4 @@ class PostRequest extends AbstractRequest
     {
         return $this->setParameter('refreshtime', $value);
     }
-
-    public function getEndpoint()
-    {
-        return $this->endpoints[$this->getTestMode() == TRUE ? 'test' : $this->getBank()];
-    }
-
 }
