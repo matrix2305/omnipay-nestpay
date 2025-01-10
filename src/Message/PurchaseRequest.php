@@ -48,13 +48,6 @@ class PurchaseRequest extends AbstractRequest
         $data['Password'] = $this->getPassword();
         $data['Mode'] = $this->getTestMode() ? 'T' : 'P';
         
-        // Get geteway
-        // ex: isbank
-        $gateway = $this->getBank();
-        
-        // Todo: http protocol
-        $protocol = 'https://';
-        
         if (!isset($this->endpoint)) {
             throw new \Exception('Invalid endpoint url');
         }
